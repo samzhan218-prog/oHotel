@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>oHotel 2.0 扩展程序 - 隐私政策</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.7;
+      color: #222;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.15rem; margin-top: 2rem; border-bottom: 1px solid #e5e5e5; padding-bottom: 0.35rem; }
+    p, li { font-size: 0.95rem; }
+    .meta { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+    a { color: #2d4f44; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.92rem; }
+    th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #f7f7f7; }
+    kbd {
+      display: inline-block;
+      padding: 1px 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #f5f5f5;
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <h1>oHotel 2.0 扩展程序 隐私政策</h1>
+  <p class="meta">
+    生效日期：2026 年 8 月 20 日<br />
+    适用产品：Chrome / Microsoft Edge / Firefox / Safari 浏览器扩展「oHotel 2.0」（以下简称「本扩展」）<br />
+    联系邮箱：<a href="mailto:sleepanda@hotmail.com">sleepanda@hotmail.com</a>
+  </p>
+
+  <p>
+    本扩展用于酒店多功能工作站场景：配置并登录现场工作站、通过 MQTT 联动外设（发票、门锁、证件扫描、支付等），
+    以及在 OPERA Cloud 报表预览时捕获 PDF 并交付工作站电子签名流程。关于隐私，本政策说明本扩展如何处理信息。
+  </p>
+
+  <h2>1. 我们收集哪些信息</h2>
+  <p>
+    本扩展<strong>不会</strong>将您的数据用于广告、出售或与无关第三方共享。
+    业务请求发往<strong>您自行配置</strong>的工作站与 MQTT 服务；开发者不运营广告分析后端收集全站浏览数据。
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>数据类型</th>
+        <th>来源</th>
+        <th>用途</th>
+        <th>存储位置</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>工作站配置</td>
+        <td>用户在扩展配置页手动填写（Host、协议、酒店码、终端码）</td>
+        <td>连接现场 oHotel 工作站、打开业务弹窗、获取 MQTT 配置</td>
+        <td>浏览器本地存储（如 chrome.storage.local）</td>
+      </tr>
+      <tr>
+        <td>登录 token / 用户标识</td>
+        <td>用户登录工作站后由工作站返回</td>
+        <td>维持会话、访问需鉴权的工作站接口、初始化 MQTT</td>
+        <td>浏览器本地存储；关闭会话或清除扩展数据后失效</td>
+      </tr>
+      <tr>
+        <td>MQTT 连接配置与订阅主题</td>
+        <td>工作站接口返回，以及运行时订阅状态</td>
+        <td>接收发票、门锁、证扫、支付、电子签名等外设/业务消息</td>
+        <td>本地存储（配置）与运行时内存（连接状态）</td>
+      </tr>
+      <tr>
+        <td>报表 PDF 内容</td>
+        <td>用户在业务页点击 PREVIEW 后，由扩展拦截弹窗并获取</td>
+        <td>在扩展 pdf-viewer 展示，并通过 PDFHandle 交付工作站签章流程</td>
+        <td>扩展内存中临时保存最近一次结果，供快捷键重发；不写入开发者远程磁盘</td>
+      </tr>
+      <tr>
+        <td>业务页相关 URL</td>
+        <td>用户当前浏览的业务页 / 预览相关导航</td>
+        <td>判断是否触发 PREVIEW 拦截及 PDF 捕获流程</td>
+        <td>一般不持久化；调试日志开启时可本地缓存有限条数</td>
+      </tr>
+      <tr>
+        <td>调试日志（可选）</td>
+        <td>扩展运行过程中的技术日志</td>
+        <td>现场排障；用户可在「调试日志」页查看或清空</td>
+        <td>扩展后台内存缓冲（有限条数），不上传开发者服务器</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. 我们如何使用信息</h2>
+  <ul>
+    <li>根据您配置的 Host 访问工作站登录与配置接口，保存 token 并建立 MQTT 连接。</li>
+    <li>通过 MQTT 将外设/业务消息转发至对应工作站页面（发票、门锁、证扫、支付、电子签名等）。</li>
+    <li>当您在业务页点击报表 PREVIEW 时，本扩展通过内容脚本拦截 <code>window.open</code>，由扩展后台获取报表 PDF；若首次响应为 HTML 壳页面，则由业务页携带 Cookie 二次 fetch。</li>
+    <li>PDF 在扩展 <code>pdf-viewer</code> 中展示，并交付给已登录的工作站页面（PDFHandle）完成签章相关处理。</li>
+    <li>您可按 <kbd>Alt</kbd> + <kbd>5</kbd>（Safari 上为 <kbd>Option</kbd> + <kbd>5</kbd>）重新交付最近一次捕获的 PDF。</li>
+    <li>除上述目的外，本扩展不会将数据用于广告、用户画像或出售给第三方。</li>
+  </ul>
+
+  <h2>3. 数据传输范围</h2>
+  <ul>
+    <li><strong>工作站 / MQTT：</strong>发往您在配置页填写的 Host 及工作站下发的 MQTT 地址（通常为酒店现场或客户指定服务器）。</li>
+    <li><strong>无广告上传：</strong>本扩展不向广告网络或无关分析服务上传 PDF、token 或浏览内容。</li>
+    <li><strong>主机权限说明：</strong>因现场工作站域名因店而异、无法预置白名单，本扩展申请 <code>*://*/*</code>。
+      实际访问目标为您配置的工作站地址、MQTT 服务，以及当前业务页上完成 PDF 捕获所需的相关 URL。
+    </li>
+  </ul>
+
+  <h2>4. 内容脚本与技术实现</h2>
+  <p>
+    本扩展在业务页注入内容脚本（含 <code>document_start</code> 的 opener-hook），用于拦截报表 PREVIEW 弹窗并配合扩展后台完成 PDF 获取。
+    扩展使用 <code>tabs</code> / <code>windows</code> 管理预览与业务弹窗，使用 <code>webNavigation</code> 作为捕获后备，
+    使用 <code>scripting</code> 配合注入与屏幕尺寸读取。
+    Safari 版本额外使用 <code>webRequest</code> 以配合 POST 等报表请求的 PDF 捕获。
+    内容脚本不修改业务页核心功能，不读取与工作站/报表预览无关的页面数据。
+  </p>
+
+  <h2>5. 数据保留与删除</h2>
+  <ul>
+    <li>工作站配置、token、MQTT 配置：保留在浏览器本地存储，直至您清除扩展数据或卸载扩展。</li>
+    <li>PDF 缓存：主要保存在扩展运行内存中，关闭浏览器或扩展进程后清除。</li>
+    <li>调试日志：有限条数内存缓冲，可在「调试日志」页一键清空。</li>
+    <li>您也可在浏览器扩展管理页中清除本扩展的存储数据。</li>
+  </ul>
+
+  <h2>6. 第三方共享</h2>
+  <p>
+    本扩展<strong>不会</strong>出售、出租或与广告/分析第三方共享您的个人信息或 PDF 内容。
+    业务数据仅在您配置的工作站与 MQTT 服务之间流转，由酒店或客户自行运维。
+  </p>
+
+  <h2>7. 儿童隐私</h2>
+  <p>本扩展面向酒店从业人员及企业用户，不面向 13 岁以下儿童，也不会故意收集儿童信息。</p>
+
+  <h2>8. 政策变更</h2>
+  <p>
+    我们可能更新本政策。更新后将在本页面修改「生效日期」。
+    重大变更时，我们可能通过扩展更新说明或官方渠道通知用户。
+  </p>
+
+  <h2>9. 联系我们</h2>
+  <p>
+    如对本政策或数据处理有疑问，请发送邮件至
+    <a href="mailto:sleepanda@hotmail.com">sleepanda@hotmail.com</a>。
+  </p>
+</body>
+</html>
